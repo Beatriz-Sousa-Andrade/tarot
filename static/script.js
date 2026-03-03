@@ -223,6 +223,129 @@ function getSuitIcon(suit) {
     return icons[suit?.toLowerCase()] || '📜';
 }
 
+// ===== FUNÇÕES DE RESPONSIVIDADE =====
+
+// Ajustar altura dos cards baseado no conteúdo
+function adjustCardHeights() {
+    const cards = document.querySelectorAll('.card');
+    const windowHeight = window.innerHeight;
+    
+    cards.forEach(card => {
+        // Altura máxima baseada no tamanho da tela
+        if (windowHeight <= 640) {
+            card.style.maxHeight = '450px';
+        } else if (windowHeight <= 896) {
+            card.style.maxHeight = '500px';
+        } else {
+            card.style.maxHeight = '600px';
+        }
+        
+        // Se o conteúdo for pequeno, ajustar altura mínima
+        const content = card.querySelector('.card-content');
+        if (content) {
+            const contentHeight = content.scrollHeight;
+            const headerHeight = card.querySelector('.card-header')?.offsetHeight || 0;
+            const totalHeight = contentHeight + headerHeight + 40; // 40px de padding
+            
+            if (totalHeight < 300) {
+                card.style.minHeight = '300px';
+            }
+        }
+    });
+}
+
+// Ajustar info box
+function adjustInfoBox() {
+    const infoBox = document.querySelector('.info-box');
+    if (infoBox) {
+        const windowHeight = window.innerHeight;
+        
+        if (windowHeight <= 640) {
+            infoBox.style.maxHeight = '400px';
+        } else if (windowHeight <= 896) {
+            infoBox.style.maxHeight = '450px';
+        } else {
+            infoBox.style.maxHeight = '600px';
+        }
+    }
+}
+
+// Ajustar search results
+function adjustSearchResults() {
+    const searchResults = document.querySelector('.search-results');
+    if (searchResults) {
+        const windowHeight = window.innerHeight;
+        
+        if (windowHeight <= 640) {
+            searchResults.style.maxHeight = '350px';
+        } else if (windowHeight <= 896) {
+            searchResults.style.maxHeight = '400px';
+        } else {
+            searchResults.style.maxHeight = '500px';
+        }
+    }
+}
+
+// Função principal de responsividade
+function handleResponsive() {
+    adjustCardHeights();
+    adjustInfoBox();
+    adjustSearchResults();
+    
+    // Fechar menu mobile em telas maiores
+    if (window.innerWidth >= 768) {
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            mobileMenu.classList.add('hidden');
+        }
+    }
+}
+
+// Debounce para evitar muitas chamadas
+let responsiveTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(responsiveTimeout);
+    responsiveTimeout = setTimeout(handleResponsive, 250);
+});
+
+// Chamar após carregar conteúdo
+const originalRenderCards = renderCards;
+renderCards = function(data, title) {
+    originalRenderCards(data, title);
+    setTimeout(handleResponsive, 100);
+};
+
+// Chamar após busca
+const originalSearchCards = searchCards;
+searchCards = async function() {
+    await originalSearchCards();
+    setTimeout(handleResponsive, 100);
+};
+
+// Observer para mudanças no DOM
+const observer = new MutationObserver(() => {
+    handleResponsive();
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+
+// Detectar orientação
+if (window.matchMedia) {
+    const orientationMedia = window.matchMedia("(orientation: portrait)");
+    orientationMedia.addEventListener('change', function(e) {
+        setTimeout(handleResponsive, 100);
+    });
+}
+
+// Chamar inicialmente
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(handleResponsive, 500);
+});
+
+
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     loadSpread('daily');

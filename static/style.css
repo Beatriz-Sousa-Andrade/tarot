@@ -1,4 +1,5 @@
 /* style.css - Estilos místicos para o Tarot */
+/* Versão com correções de responsividade e scroll */
 
 /* Font families */
 .title-font {
@@ -42,6 +43,17 @@
     100% { transform: translateX(100%); }
 }
 
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 /* Background elements */
 .bg-stars {
     background: #0a0a0f;
@@ -52,6 +64,12 @@
 
 .bg-gradient {
     background: radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.1) 0%, transparent 50%);
+}
+
+@media (min-width: 1536px) {
+    .bg-gradient {
+        background-size: 200% 200%;
+    }
 }
 
 /* Text effects */
@@ -94,6 +112,13 @@
     background: radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.2), transparent 70%);
 }
 
+@media (max-width: 640px) {
+    .crystal-ball {
+        width: 60px;
+        height: 60px;
+    }
+}
+
 /* Loading Spinner */
 .loading-spinner {
     width: 50px;
@@ -105,14 +130,58 @@
     margin: 0 auto;
 }
 
-/* Cards */
+@media (max-width: 640px) {
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border-width: 3px;
+    }
+}
+
+/* ===== GRID LAYOUTS - VERSÃO UNIVERSAL ===== */
+.cards-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Ajustes para diferentes quantidades de cartas */
+@media (min-width: 640px) {
+    .cards-grid:has(> :last-child:nth-child(1)) {
+        grid-template-columns: minmax(280px, 400px);
+        justify-content: center;
+    }
+    
+    .cards-grid:has(> :last-child:nth-child(2)) {
+        grid-template-columns: repeat(2, minmax(280px, 1fr));
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .cards-grid:has(> :last-child:nth-child(3)) {
+        grid-template-columns: repeat(3, minmax(260px, 1fr));
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* ===== CARDS COM SCROLL INTERNO ===== */
 .card {
-    background: linear-gradient(135deg, rgba(30, 27, 45, 0.9), rgba(20, 18, 30, 0.95));
+    height: auto;
+    min-height: 400px;
+    max-height: 600px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, rgba(30, 27, 45, 0.95), rgba(20, 18, 30, 0.98));
     border: 1px solid rgba(147, 51, 234, 0.2);
     border-radius: 1rem;
     backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-    animation: cardReveal 0.5s ease-out;
+    animation: cardReveal 0.5s ease-out, fadeInScale 0.3s ease-out;
     position: relative;
     overflow: hidden;
 }
@@ -144,6 +213,36 @@
 
 .card.reversed {
     border-left: 4px solid #ef4444;
+}
+
+.card-content {
+    flex: 1;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #9333ea rgba(147, 51, 234, 0.1);
+}
+
+/* Scrollbar personalizada para cards */
+.card-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.card-content::-webkit-scrollbar-track {
+    background: rgba(147, 51, 234, 0.1);
+    border-radius: 10px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+    background: #9333ea;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-content::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
 }
 
 /* Card header */
@@ -182,16 +281,14 @@
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* Card content */
-.card-content {
-    padding: 1rem;
-}
-
+/* Card text elements */
 .card-meaning {
     color: #d1d5db;
     font-size: 0.95rem;
     line-height: 1.6;
     margin-bottom: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .card-suit {
@@ -217,16 +314,19 @@
     margin-bottom: 0.5rem;
 }
 
-/* Interpretation text */
-.interpretation-text {
-    color: #9ca3af;
+/* Daily message */
+.daily-message {
+    color: #c084fc;
     font-size: 0.95rem;
-    line-height: 1.6;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 0.5rem;
-    border-left: 3px solid #9333ea;
-    margin-top: 1rem;
+    text-align: left;
+    font-style: italic;
+    margin-bottom: 1rem;
+    padding: 0.875rem;
+    background: rgba(147, 51, 234, 0.15);
+    border-radius: 0.75rem;
+    border: 1px dashed rgba(147, 51, 234, 0.3);
+    line-height: 1.5;
+    word-wrap: break-word;
 }
 
 /* Daily card special */
@@ -237,23 +337,127 @@
     margin: 0 auto;
 }
 
-/* Adicione estas classes ao seu style.css existente */
-
-/* Daily message styling */
-.daily-message {
-    color: #c084fc;
-    font-size: 1.1rem;
-    text-align: center;
-    font-style: italic;
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background: rgba(147, 51, 234, 0.1);
-    border-radius: 0.75rem;
-    border: 1px dashed rgba(147, 51, 234, 0.3);
-    line-height: 1.6;
+/* Interpretation text */
+.interpretation-text {
+    color: #9ca3af;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    padding: 0.875rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.5rem;
+    border-left: 3px solid #9333ea;
+    margin-top: 0.75rem;
+    word-wrap: break-word;
 }
 
-/* Tooltip para informações adicionais */
+/* ===== INFO BOX COM SCROLL ===== */
+.info-box {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    border-radius: 1rem;
+    padding: 1.5rem 2rem;
+    margin: 2rem auto;
+    color: #e5e7eb;
+    line-height: 1.8;
+    max-width: 1000px;
+    width: 90%;
+    backdrop-filter: blur(10px);
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    max-height: 600px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #9333ea rgba(147, 51, 234, 0.1);
+}
+
+.info-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.info-box::-webkit-scrollbar-track {
+    background: rgba(147, 51, 234, 0.1);
+    border-radius: 10px;
+}
+
+.info-box::-webkit-scrollbar-thumb {
+    background: #9333ea;
+    border-radius: 10px;
+}
+
+.info-box::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+}
+
+.summary-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #f3f4f6;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    padding-right: 0.5rem;
+}
+
+/* ===== SEARCH RESULTS COM SCROLL ===== */
+.search-results {
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #9333ea rgba(147, 51, 234, 0.1);
+    padding-right: 0.5rem;
+}
+
+.search-results::-webkit-scrollbar {
+    width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track {
+    background: rgba(147, 51, 234, 0.1);
+    border-radius: 10px;
+}
+
+.search-results::-webkit-scrollbar-thumb {
+    background: #9333ea;
+    border-radius: 10px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover {
+    background: #a855f7;
+}
+
+/* Result items */
+.search-result-item {
+    background: rgba(30, 27, 45, 0.9);
+    border: 1px solid rgba(147, 51, 234, 0.2);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.search-result-item:hover {
+    border-color: rgba(147, 51, 234, 0.5);
+    transform: translateX(5px);
+}
+
+/* Badge para tipo de carta */
+.card-type-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(147, 51, 234, 0.15);
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    color: #a78bfa;
+    border: 1px solid rgba(147, 51, 234, 0.3);
+    margin-right: 0.5rem;
+}
+
+/* Tooltip */
 .tooltip {
     position: relative;
     display: inline-block;
@@ -284,355 +488,25 @@
     z-index: 20;
 }
 
-/* Badge para tipo de carta */
-.card-type-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    background: rgba(147, 51, 234, 0.15);
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    color: #a78bfa;
+/* ===== QUESTION BUBBLE ===== */
+.question-bubble {
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.2), rgba(79, 70, 229, 0.2));
     border: 1px solid rgba(147, 51, 234, 0.3);
-    margin-right: 0.5rem;
-}
-/* Search results */
-.search-result-item {
-    background: rgba(30, 27, 45, 0.9);
-    border: 1px solid rgba(147, 51, 234, 0.2);
-    border-radius: 0.75rem;
-    padding: 1rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 800px;
+    word-wrap: break-word;
 }
 
-.search-result-item:hover {
-    border-color: rgba(147, 51, 234, 0.5);
-    transform: translateX(5px);
-}
-
-/* style.css - CORREÇÕES DE TAMANHO E RESPONSIVIDADE */
-
-/* style.css - CORREÇÕES DE TAMANHO E RESPONSIVIDADE */
-
-/* Grid layouts - Versão Corrigida */
-.cards-grid {
+/* ===== STATS CARDS ===== */
+.stats-grid {
     display: grid;
-    gap: 1.5rem;
-    margin-top: 2rem;
-    width: 100%;
-}
-
-/* Grid para 1 carta (Carta do Dia) */
-.cards-grid:has(> :nth-child(1):last-child) {
-    grid-template-columns: minmax(300px, 450px);
-    justify-content: center;
-}
-
-/* Grid para 2 cartas */
-.cards-grid:has(> :nth-child(2):last-child) {
-    grid-template-columns: repeat(2, minmax(280px, 1fr));
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Grid para 3 cartas */
-.cards-grid:has(> :nth-child(3):last-child) {
-    grid-template-columns: repeat(3, minmax(260px, 1fr));
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Grid para 4+ cartas (Cruz Celta) */
-.cards-grid:has(> :nth-child(n+4)) {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 350px));
-    justify-content: center;
-}
-
-/* Cards com altura fixa para conteúdo */
-.card {
-    height: auto;
-    min-height: 400px;
-    max-height: none;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, rgba(30, 27, 45, 0.95), rgba(20, 18, 30, 0.98));
-    border: 1px solid rgba(147, 51, 234, 0.2);
-    border-radius: 1rem;
-    backdrop-filter: blur(10px);
-    animation: cardReveal 0.5s ease-out;
-    position: relative;
-    overflow: hidden;
-}
-
-.card-content {
-    flex: 1;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    max-height: 500px;
-}
-
-/* Scrollbar personalizada para o conteúdo das cartas */
-.card-content::-webkit-scrollbar {
-    width: 4px;
-}
-
-.card-content::-webkit-scrollbar-track {
-    background: rgba(147, 51, 234, 0.1);
-    border-radius: 4px;
-}
-
-.card-content::-webkit-scrollbar-thumb {
-    background: rgba(147, 51, 234, 0.5);
-    border-radius: 4px;
-}
-
-/* Textos dentro das cartas */
-.card-meaning {
-    color: #d1d5db;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 1rem;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    flex-shrink: 0;
-}
-
-/* Daily message */
-.daily-message {
-    color: #c084fc;
-    font-size: 0.95rem;
-    text-align: left;
-    font-style: italic;
-    margin-bottom: 1rem;
-    padding: 0.875rem;
-    background: rgba(147, 51, 234, 0.15);
-    border-radius: 0.75rem;
-    border: 1px dashed rgba(147, 51, 234, 0.3);
-    line-height: 1.5;
-    word-wrap: break-word;
-    flex-shrink: 0;
-}
-
-/* Interpretation texts */
-.interpretation-text {
-    color: #9ca3af;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    padding: 0.875rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 0.5rem;
-    border-left: 3px solid #9333ea;
-    margin-top: 0.75rem;
-    word-wrap: break-word;
-    flex-shrink: 0;
-}
-
-/* Info Box (Resumo) - Ajuste fino */
-.info-box {
-    background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
-    border: 1px solid rgba(147, 51, 234, 0.3);
-    border-radius: 1rem;
-    padding: 1.5rem 2rem;
-    margin: 2rem auto;
-    color: #e5e7eb;
-    line-height: 1.8;
-    max-width: 800px; /* Reduzido de 1000px para 800px */
-    width: 90%;
-    backdrop-filter: blur(10px);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-}
-
-.summary-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
-    word-break: break-word;
-    max-height: none;
-    height: auto;
-    overflow: visible;
-    color: #f3f4f6;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    max-width: 95%; /* Garante que o texto não encoste nas bordas */
-    margin: 0 auto;
-}
-
-/* Container um pouco menor e com mais capacidade de texto */
-@media (min-width: 1280px) {
-    .info-box {
-        max-width: 900px; /* Reduzido de 1200px para 900px */
-        padding: 1.75rem 2.5rem;
-    }
-    
-    .summary-content {
-        font-size: 1.1rem; /* Mantido o mesmo tamanho */
-        line-height: 1.8;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .info-box {
-        padding: 1.25rem 1.5rem;
-        width: 95%;
-        margin: 1.5rem auto;
-        max-width: 700px;
-    }
-    
-    .summary-content {
-        font-size: 1rem;
-        line-height: 1.7;
-    }
-}
-
-@media (max-width: 480px) {
-    .info-box {
-        padding: 1rem 1.25rem;
-        width: 98%;
-        max-width: 100%;
-    }
-    
-    .summary-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #1a1a1f;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #4c1d95;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #6d28d9;
-}
-
-/* Selection styling */
-::selection {
-    background: rgba(147, 51, 234, 0.3);
-    color: white;
-}
-
-/* Focus styles */
-*:focus {
-    outline: 2px solid #9333ea;
-    outline-offset: 2px;
-}
-
-/* Error message */
-.error-message {
-    background: rgba(239, 68, 68, 0.2);
-    border: 1px solid #ef4444;
-    color: #ef4444;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    text-align: center;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
     margin: 1rem 0;
 }
 
-/* Success message */
-.success-message {
-    background: rgba(16, 185, 129, 0.2);
-    border: 1px solid #10b981;
-    color: #10b981;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    margin: 1rem 0;
-}
-
-/* Info box */
-/* Info Box (Resumo) - CORREÇÃO DEFINITIVA */
-.info-box {
-    background: linear-gradient(135deg, rgba(147, 51, 234, 0.15), rgba(79, 70, 229, 0.15));
-    border: 1px solid rgba(147, 51, 234, 0.3);
-    border-radius: 1rem;
-    padding: 1.5rem 2rem;
-    margin: 2rem auto;
-    color: #e5e7eb;
-    line-height: 1.8;
-    max-width: 1000px;
-    width: 90%;
-    backdrop-filter: blur(10px);
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-}
-
-.summary-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap; /* Preserva quebras de linha e espaços */
-    word-break: break-word;
-    max-height: none; /* Remove qualquer limite de altura */
-    height: auto;
-    overflow: visible;
-    color: #f3f4f6;
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-}
-
-/* Para telas maiores */
-@media (min-width: 1280px) {
-    .info-box {
-        max-width: 1200px;
-        padding: 2rem 3rem;
-    }
-    
-    .summary-content {
-        font-size: 1.15rem;
-        line-height: 1.9;
-    }
-}
-
-@media (max-width: 768px) {
-    .info-box {
-        padding: 1.25rem 1.5rem;
-        width: 95%;
-        margin: 1.5rem auto;
-    }
-    
-    .summary-content {
-        font-size: 1rem;
-        line-height: 1.7;
-    }
-}
-
-@media (max-width: 480px) {
-    .info-box {
-        padding: 1rem 1.25rem;
-        width: 100%;
-    }
-    
-    .summary-content {
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-}
-
-/* Stats cards */
 .stat-card {
     background: rgba(30, 27, 45, 0.8);
     border: 1px solid rgba(147, 51, 234, 0.2);
@@ -661,71 +535,105 @@
     letter-spacing: 0.05em;
 }
 
-/* Adicione ao seu CSS */
-.search-results {
-    max-height: 500px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #9f7aea #2d3748;
+/* ===== MESSAGES ===== */
+.error-message, .success-message {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    margin: 1rem 0;
+    word-wrap: break-word;
 }
 
-.search-results::-webkit-scrollbar {
-    width: 6px;
+.error-message {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid #ef4444;
+    color: #ef4444;
 }
 
-.search-results::-webkit-scrollbar-track {
-    background: #2d3748;
-    border-radius: 10px;
+.success-message {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid #10b981;
+    color: #10b981;
 }
 
-.search-results::-webkit-scrollbar-thumb {
-    background: #9f7aea;
-    border-radius: 10px;
-}
-
-.search-result-item {
-    transition: all 0.3s ease;
-}
-
-.search-result-item:hover {
-    transform: translateX(5px);
-}
-
-
-
-/* ===== CORREÇÕES DE RESPONSIVIDADE ===== */
-
-/* Ajustes de container */
+/* ===== CONTAINER E LAYOUT ===== */
 .container {
     width: 100%;
     padding-left: 1rem;
     padding-right: 1rem;
 }
 
-@media (min-width: 640px) {
-    .container {
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    }
+#mainContent {
+    min-height: calc(100vh - 200px);
+    width: 100%;
+    padding: 1rem;
 }
 
-/* Grid responsivo para cartas */
-
-
-/* Card improvements */
-.card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
+/* ===== SCROLL GLOBAL ===== */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
 }
 
-.card-content {
-    flex: 1;
-    padding: 1.25rem;
+::-webkit-scrollbar-track {
+    background: #1a1a1f;
 }
 
+::-webkit-scrollbar-thumb {
+    background: #4c1d95;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6d28d9;
+}
+
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #9f7aea #2d3748;
+}
+
+/* ===== SELECTION E FOCUS ===== */
+::selection {
+    background: rgba(147, 51, 234, 0.3);
+    color: white;
+}
+
+*:focus {
+    outline: 2px solid #9333ea;
+    outline-offset: 2px;
+}
+
+/* ===== PREVENÇÃO DE OVERFLOW ===== */
+img, svg, video, canvas, audio, iframe, embed, object {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Telas pequenas (mobile) */
 @media (max-width: 640px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    #mainContent {
+        padding: 0.75rem;
+        min-height: calc(100vh - 150px);
+    }
+    
+    .cards-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .card {
+        min-height: 350px;
+        max-height: 500px;
+    }
+    
     .card-content {
         padding: 1rem;
     }
@@ -733,95 +641,67 @@
     .card-name {
         font-size: 1.1rem;
     }
-}
-
-/* Ajustes para títulos */
-.title-font {
-    word-break: break-word;
-}
-
-/* Ajustes para inputs em mobile */
-@media (max-width: 640px) {
-    input, button {
-        font-size: 16px !important; /* Previne zoom automático em iOS */
+    
+    .info-box {
+        padding: 1rem 1.25rem;
+        width: 95%;
+        max-height: 500px;
+    }
+    
+    .summary-content {
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    .search-results {
+        max-height: 400px;
+    }
+    
+    .question-bubble {
+        padding: 1rem;
+        margin: 0.75rem auto;
+    }
+    
+    .question-bubble p {
+        font-size: 1rem;
+    }
+    
+    .daily-card {
+        max-width: 100%;
+    }
+    
+    .tooltip-text {
+        white-space: normal;
+        width: 200px;
+        text-align: center;
+    }
+    
+    button, 
+    [role="button"],
+    .search-result-item,
+    .suggestion-chip,
+    .nav-link {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.5rem 1rem;
+    }
+    
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    
+    #questionInput {
+        padding-right: 1rem;
     }
     
     .crystal-ball {
         width: 60px;
         height: 60px;
     }
-}
-
-/* Resultados de busca responsivos */
-.search-results {
-    max-height: 60vh;
-    overflow-y: auto;
-}
-
-.search-result-item {
-    transition: all 0.3s ease;
-}
-
-@media (max-width: 640px) {
-    .search-result-item {
-        padding: 0.875rem;
-    }
     
-    .search-result-item .text-3xl {
-        font-size: 2rem;
-    }
-}
-
-/* Ajustes para tablets */
-@media (min-width: 641px) and (max-width: 1023px) {
-    .cards-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .daily-card {
-        max-width: 500px;
-    }
-}
-
-/* Loading spinner responsivo */
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-}
-
-@media (max-width: 640px) {
     .loading-spinner {
         width: 40px;
         height: 40px;
-        border-width: 3px;
-    }
-}
-
-/* Tooltip responsivo */
-@media (max-width: 640px) {
-    .tooltip-text {
-        white-space: normal;
-        width: 200px;
-        text-align: center;
-    }
-}
-
-/* Ajustes para a seção de pergunta */
-@media (max-width: 640px) {
-    #questionInput {
-        padding-right: 1rem;
-    }
-    
-    .question-bubble {
-        padding: 1rem;
-        font-size: 0.95rem;
-    }
-}
-
-/* Melhorias para telas muito pequenas */
-@media (max-width: 380px) {
-    .cards-grid {
-        grid-template-columns: 1fr;
     }
     
     .title-font.text-3xl {
@@ -833,58 +713,96 @@
     }
 }
 
-/* Animações suaves para transições de tela */
-@keyframes fadeInScale {
-    from {
-        opacity: 0;
-        transform: scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.card {
-    animation: fadeInScale 0.3s ease-out;
-}
-
-/* Ajustes para landscape em mobile */
-@media (max-width: 896px) and (orientation: landscape) {
-    .hero-section {
-        padding: 2rem 1rem;
+/* Telas muito pequenas */
+@media (max-width: 380px) {
+    .cards-grid {
+        grid-template-columns: 1fr;
     }
     
-    .crystal-ball {
-        width: 50px;
-        height: 50px;
+    .stat-value {
+        font-size: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+}
+
+/* Tablets */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
     }
     
     .cards-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-}
-
-/* Prevenção de overflow */
-img, svg, video, canvas, audio, iframe, embed, object {
-    max-width: 100%;
-    height: auto;
-}
-
-/* Touch targets maiores para mobile */
-@media (max-width: 640px) {
-    button, 
-    [role="button"],
-    .search-result-item,
-    .suggestion-chip {
-        min-height: 44px;
-        min-width: 44px;
+    
+    .card {
+        min-height: 380px;
+        max-height: 550px;
     }
     
-    .suggestion-chip {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+    .info-box {
+        max-width: 90%;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .daily-card {
+        max-width: 500px;
+    }
+}
+
+/* Telas grandes */
+@media (min-width: 1024px) {
+    .container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+/* Telas muito grandes */
+@media (min-width: 1536px) {
+    .cards-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .card {
+        max-height: 650px;
+    }
+    
+    .info-box {
+        max-width: 1400px;
+        max-height: 700px;
+    }
+}
+
+/* Landscape em mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+    .hero-section {
+        padding: 2rem 1rem;
+    }
+    
+    .cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .card {
+        min-height: 300px;
+        max-height: 450px;
+    }
+    
+    .info-box {
+        max-height: 400px;
+    }
+    
+    .crystal-ball {
+        width: 50px;
+        height: 50px;
     }
 }
 
@@ -894,20 +812,7 @@ img, svg, video, canvas, audio, iframe, embed, object {
     width: auto;
 }
 
-/* Scrollbar fina para todos os dispositivos */
-.custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: #9f7aea #2d3748;
-}
-
 /* Correção para o botão de menu mobile */
 #mobileMenuBtn {
     touch-action: manipulation;
-}
-
-/* Ajustes para o gradiente de fundo em telas grandes */
-@media (min-width: 1536px) {
-    .bg-gradient {
-        background-size: 200% 200%;
-    }
 }
